@@ -10,33 +10,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUserDto = void 0;
-const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
-const common_1 = require("@nestjs/common");
+const class_validator_1 = require("class-validator");
 class CreateUserDto {
 }
 __decorate([
     (0, class_transformer_1.Transform)((params) => params.value.trim()),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
-    (0, class_validator_1.MaxLength)(20),
+    (0, class_validator_1.MinLength)(2),
+    (0, class_validator_1.MaxLength)(30),
+    (0, swagger_1.ApiProperty)({ description: '유저 이름' }),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.MaxLength)(60),
+    (0, swagger_1.ApiProperty)({ description: '유저 email' }),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "email", void 0);
 __decorate([
-    (0, class_transformer_1.Transform)(({ value, obj }) => {
-        if (obj.password.includes(obj.name.trim())) {
-            throw new common_1.BadRequestException('password는 name과 같은 문자열을 포함할 수 없습니다.');
-        }
-        return value.trim();
-    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.Matches)(/^[A-Za-z\d!@#$%^&*()]{8,30}$/),
+    (0, swagger_1.ApiProperty)({ description: '유저 password' }),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "password", void 0);
 exports.CreateUserDto = CreateUserDto;

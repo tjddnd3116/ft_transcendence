@@ -14,8 +14,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailService = void 0;
 const nodemailer = require("nodemailer");
-const common_1 = require("@nestjs/common");
 const emailConfig_1 = require("../config/emailConfig");
+const common_1 = require("@nestjs/common");
 let EmailService = class EmailService {
     constructor(config) {
         this.config = config;
@@ -34,11 +34,11 @@ let EmailService = class EmailService {
             to: emailAddress,
             subject: '가입 인증 메일',
             html: `
-		가입확인 버튼을 누르시면 가입 인증이 완료됩니다.<br/>
-		<form action="${url}" method="POST">
-			<button>가입확인</button>
-			</form>
-			`,
+	  가입확인 버튼을 누르시면 가입 인증이 완료됩니다.<br/>
+	  <form action="${url}" method="POST">
+	  <button>가입확인</button>
+	  </form>
+	  `,
         };
         return await this.transporter.sendMail(mailOptions);
     }

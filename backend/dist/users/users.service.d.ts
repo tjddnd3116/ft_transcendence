@@ -1,19 +1,19 @@
 import { EmailService } from 'src/email/email.service';
 import { UserInfo } from './UserInfo';
-import { UserEntity } from './entities/user.entity';
-import { Repository } from 'typeorm';
 import { AuthService } from 'src/auth/auth.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRepository } from './user.repository';
+import { CreateUserDto } from './dto/create-user.dto';
 export declare class UsersService {
     private emailService;
-    private userRepository;
     private authService;
-    constructor(emailService: EmailService, userRepository: Repository<UserEntity>, authService: AuthService);
-    createUser(name: string, email: string, password: string): Promise<void>;
+    private userRepository;
+    constructor(emailService: EmailService, authService: AuthService, userRepository: UserRepository);
+    createUser(createUserDto: CreateUserDto): Promise<void>;
     private checkUserExists;
-    private saveUser;
     private sendMemberJoinEmail;
     verifyEmail(signupVerifyToken: string): Promise<string>;
     login(email: string, password: string): Promise<string>;
     getUserInfo(userId: string): Promise<UserInfo>;
-    findOne(id: number): number;
+    updateUserInfo(userId: string, updateUserDto: UpdateUserDto): Promise<UserInfo>;
 }

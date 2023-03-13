@@ -13,39 +13,23 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
-const jwt = require("jsonwebtoken");
 const common_1 = require("@nestjs/common");
 const authConfig_1 = require("../config/authConfig");
+const jwt_1 = require("@nestjs/jwt");
 let AuthService = class AuthService {
-    constructor(config) {
+    constructor(config, jwtService) {
         this.config = config;
+        this.jwtService = jwtService;
     }
     login(user) {
         const payload = Object.assign({}, user);
-        return jwt.sign(payload, this.config.jwtSecret, {
-            expiresIn: '1d',
-            audience: 'example.com',
-            issuer: 'example.com',
-        });
-    }
-    verify(jwtString) {
-        try {
-            const payload = jwt.verify(jwtString, this.config.jwtSecret);
-            const { id, email } = payload;
-            return {
-                userId: id,
-                email,
-            };
-        }
-        catch (e) {
-            throw new common_1.UnauthorizedException();
-        }
+        return this.jwtService.sign(payload);
     }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(authConfig_1.default.KEY)),
-    __metadata("design:paramtypes", [void 0])
+    __metadata("design:paramtypes", [void 0, jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map

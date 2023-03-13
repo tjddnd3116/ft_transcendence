@@ -1,5 +1,5 @@
-import { ConfigType } from '@nestjs/config';
 import emailConfig from 'src/config/emailConfig';
+import { ConfigType } from '@nestjs/config';
 export declare class EmailService {
     private config;
     private transporter;

@@ -8,40 +8,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
-const logger_middleware_1 = require("./middleware/logger.middleware");
 const users_module_1 = require("./users/users.module");
-const email_module_1 = require("./email/email.module");
 const config_1 = require("@nestjs/config");
-const authConfig_1 = require("./config/authConfig");
 const emailConfig_1 = require("./config/emailConfig");
 const validationSchema_1 = require("./config/validationSchema");
 const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_config_1 = require("./config/typeorm.config");
+const game_module_1 = require("./game/game.module");
+const chat_room_module_1 = require("./chat-room/chat-room.module");
+const authConfig_1 = require("./config/authConfig");
 let AppModule = class AppModule {
-    configure(consumer) {
-        consumer.apply(logger_middleware_1.LoggerMiddleware).forRoutes('/users');
-    }
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             users_module_1.UsersModule,
-            email_module_1.EmailModule,
             config_1.ConfigModule.forRoot({
                 envFilePath: [`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],
                 load: [emailConfig_1.default, authConfig_1.default],
                 isGlobal: true,
                 validationSchema: validationSchema_1.validationSchema,
             }),
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'mysql',
-                host: process.env.DATABASE_HOST,
-                port: 3306,
-                username: process.env.DATABASE_USERNAME,
-                password: process.env.DATABASE_PASSWORD,
-                database: 'test',
-                entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
-            }),
+            typeorm_1.TypeOrmModule.forRoot(typeorm_config_1.typeORMConfig),
+            chat_room_module_1.ChatRoomModule,
+            game_module_1.GameModule,
         ],
         controllers: [],
         providers: [],

@@ -18,15 +18,15 @@ const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const verify_email_dto_1 = require("./dto/verify-email.dto");
 const user_login_dto_1 = require("./dto/user-login.dto");
-const auth_service_1 = require("../auth/auth.service");
+const passport_1 = require("@nestjs/passport");
+const update_user_dto_1 = require("./dto/update-user.dto");
+const swagger_1 = require("@nestjs/swagger");
 let UsersController = class UsersController {
-    constructor(usersService, authService) {
+    constructor(usersService) {
         this.usersService = usersService;
-        this.authService = authService;
     }
-    async create(createUserDto) {
-        const { name, email, password } = createUserDto;
-        this.usersService.createUser(name, email, password);
+    async createUser(createUserDto) {
+        return this.usersService.createUser(createUserDto);
     }
     async verifyEmail(dto) {
         const { signupVerifyToken } = dto;
@@ -36,24 +36,37 @@ let UsersController = class UsersController {
         const { email, password } = dto;
         return await this.usersService.login(email, password);
     }
-    findAll() {
-        console.log('findAll()');
-    }
-    async getUserInfo(headers, userId) {
-        const jwtString = headers.authorization.split('Bearer ')[1];
-        this.authService.verify(jwtString);
+    async getUserInfo(userId) {
         return this.usersService.getUserInfo(userId);
+    }
+    async updateUserInfo(userId, updateUserDto) {
+        return this.usersService.updateUserInfo(userId, updateUserDto);
     }
 };
 __decorate([
     (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)(common_1.ValidationPipe)),
+    (0, swagger_1.ApiOperation)({ summary: '유저 생성 API', description: '유저를 생성한다.' }),
+    (0, swagger_1.ApiBody)({
+        type: create_user_dto_1.CreateUserDto,
+    }),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "create", null);
+], UsersController.prototype, "createUser", null);
 __decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    (0, swagger_1.ApiOperation)({
+        summary: '채팅방 생성 API',
+        description: '채팅방을 생성한다.',
+    }),
     (0, common_1.Post)('/email-verify'),
+    (0, swagger_1.ApiOperation)({
+        summary: '유저 email 인증 API',
+        description: '회원가입한 유저의 email 주소로 인증 메일을 발송한다.',
+    }),
+    (0, swagger_1.ApiBody)({ type: verify_email_dto_1.VerifyEmailDto }),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [verify_email_dto_1.VerifyEmailDto]),
@@ -61,29 +74,45 @@ __decorate([
 ], UsersController.prototype, "verifyEmail", null);
 __decorate([
     (0, common_1.Post)('/login'),
+    (0, swagger_1.ApiOperation)({
+        summary: '유저 로그인 API',
+        description: '유저 email, password로 로그인한다.',
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [user_login_dto_1.UserLoginDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "login", null);
 __decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "findAll", null);
-__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
     (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_1.Param)('id')),
+    (0, swagger_1.ApiOperation)({
+        summary: '유저 정보 API',
+        description: '유저의 정보를 얻는다.',
+    }),
+    __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserInfo", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
+    (0, common_1.Patch)(':id/status'),
+    (0, swagger_1.ApiOperation)({
+        summary: '유저 정보 업데이트 API',
+        description: '유저의 정보(password, img)를 업데이트한다.',
+    }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUserInfo", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
-    __metadata("design:paramtypes", [users_service_1.UsersService,
-        auth_service_1.AuthService])
+    (0, swagger_1.ApiTags)('User API'),
+    __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
 exports.UsersController = UsersController;
 //# sourceMappingURL=users.controller.js.map

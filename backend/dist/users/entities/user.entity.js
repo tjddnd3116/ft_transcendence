@@ -10,7 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserEntity = void 0;
+const game_session_entity_1 = require("../../game/entities/game-session.entity");
 const typeorm_1 = require("typeorm");
+const friendship_entity_1 = require("./friendship.entity");
 let UserEntity = class UserEntity {
 };
 __decorate([
@@ -26,13 +28,33 @@ __decorate([
     __metadata("design:type", String)
 ], UserEntity.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 30 }),
+    (0, typeorm_1.Column)({ length: 60 }),
     __metadata("design:type", String)
 ], UserEntity.prototype, "password", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 60 }),
     __metadata("design:type", String)
 ], UserEntity.prototype, "signupVerifyToken", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'avatar_image_url' }),
+    __metadata("design:type", String)
+], UserEntity.prototype, "avatarImageUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'registration_date' }),
+    __metadata("design:type", Date)
+], UserEntity.prototype, "registrationDate", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => game_session_entity_1.GameSessionEntity, (gameSession) => gameSession.winner),
+    __metadata("design:type", Array)
+], UserEntity.prototype, "wonGames", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => friendship_entity_1.FriendShipEntity, (friendship) => friendship.user),
+    __metadata("design:type", Array)
+], UserEntity.prototype, "friendships", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => friendship_entity_1.FriendShipEntity, (friendship) => friendship.friend),
+    __metadata("design:type", Array)
+], UserEntity.prototype, "friendOf", void 0);
 UserEntity = __decorate([
     (0, typeorm_1.Entity)('User')
 ], UserEntity);
