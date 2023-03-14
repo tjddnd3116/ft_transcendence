@@ -14,7 +14,8 @@ import { UserEntity } from 'src/users/entities/user.entity';
 // ORM을 이용한 개발은 객체와 데이터베이스의 변형에 유연하게 사용가능하다
 export const typeORMConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: process.env.DATABASE_HOST,
+  // ip hardcoding for cluster mac
+  host: '10.18.248.44',
   port: +process.env.DATABASE_PORT,
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,

@@ -43,6 +43,7 @@ let UsersService = class UsersService {
         if (!user)
             throw new rxjs_1.NotFoundError('유저가 존재하지 않습니다.');
         user.isVerified = true;
+        this.userRepository.save(user);
         return this.authService.login({
             id: user.id,
             name: user.name,

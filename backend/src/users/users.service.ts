@@ -49,14 +49,13 @@ export class UsersService {
     );
   }
 
-  // TODO: email 인증 하기 전 로그인 차단 기능 추가
   async verifyEmail(signupVerifyToken: string): Promise<string> {
     const user = await this.userRepository.findUserByToken(signupVerifyToken);
 
     if (!user) throw new NotFoundError('유저가 존재하지 않습니다.');
 
     user.isVerified = true;
-
+    this.userRepository.save(user);
     return this.authService.login({
       id: user.id,
       name: user.name,
