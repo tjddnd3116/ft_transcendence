@@ -49,18 +49,12 @@ __decorate([
     (0, swagger_1.ApiBody)({
         type: create_user_dto_1.CreateUserDto,
     }),
-    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "createUser", null);
 __decorate([
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
-    (0, swagger_1.ApiOperation)({
-        summary: '채팅방 생성 API',
-        description: '채팅방을 생성한다.',
-    }),
     (0, common_1.Post)('/email-verify'),
     (0, swagger_1.ApiOperation)({
         summary: '유저 email 인증 API',

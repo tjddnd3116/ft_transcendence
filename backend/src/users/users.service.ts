@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as uuid from 'uuid';
 import { EmailService } from 'src/email/email.service';
 import { UserInfo } from './UserInfo';
@@ -17,20 +21,25 @@ export class UsersService {
 
     private userRepository: UserRepository,
   ) {}
+
   async createUser(createUserDto: CreateUserDto) {
-    await this.checkUserExists(createUserDto.email);
+    const { email, name, password } = createUserDto;
+    await this.checkUserExists(email);
 
     const signupVerifyToken = uuid.v1();
 
-    createUserDto.signupVerifyToken = signupVerifyToken;
-
-    await this.userRepository.saveUser(createUserDto);
-    await this.sendMemberJoinEmail(createUserDto.email, signupVerifyToken);
+    await this.userRepository.saveUser(
+      email,
+      name,
+      password,
+      signupVerifyToken,
+    );
+    await this.sendMemberJoinEmail(email, signupVerifyToken);
   }
 
   private async checkUserExists(emailAddress: string): Promise<void> {
     const user = await this.userRepository.findUserByEmail(emailAddress);
-    if (!user) throw new NotFoundError('유저가 존재하지 않습니다.');
+    if (user) throw new Error('이미 같은 이메일을 사용중입니다.');
   }
 
   private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {
@@ -40,10 +49,13 @@ export class UsersService {
     );
   }
 
+  // TODO: email 인증 하기 전 로그인 차단 기능 추가
   async verifyEmail(signupVerifyToken: string): Promise<string> {
     const user = await this.userRepository.findUserByToken(signupVerifyToken);
 
     if (!user) throw new NotFoundError('유저가 존재하지 않습니다.');
+
+    user.isVerified = true;
 
     return this.authService.login({
       id: user.id,
@@ -55,14 +67,22 @@ export class UsersService {
   async login(email: string, password: string): Promise<string> {
     const user = await this.userRepository.findUserByEmail(email);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지 않습니다.');
+    }
+
+    if (user.isVerified === false) {
+      throw new UnauthorizedException('email 인증이 필요합니다.');
+    }
+
+    if (await bcrypt.compare(password, user.password)) {
       return this.authService.login({
         id: user.id,
         name: user.name,
         email: user.email,
       });
     } else {
-      throw new NotFoundError('유저가 존재하지 않습니다.');
+      throw new UnauthorizedException('비밀번호가 틀렸습니다.');
     }
   }
 
@@ -84,9 +104,7 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
   ): Promise<UserInfo> {
     const { password, avatarImageUrl } = updateUserDto;
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
+    const user = await this.userRepository.findUserById(userId);
     if (!user) {
       throw new NotFoundError('유저가 존재하지 않습니다.');
     }

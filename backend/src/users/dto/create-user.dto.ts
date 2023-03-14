@@ -26,6 +26,4 @@ export class CreateUserDto {
   @Matches(/^[A-Za-z\d!@#$%^&*()]{8,30}$/)
   @ApiProperty({ description: '유저 password' })
   password: string;
-
-  signupVerifyToken: string;
 }

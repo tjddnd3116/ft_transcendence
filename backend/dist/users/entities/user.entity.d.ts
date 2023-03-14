@@ -8,6 +8,7 @@ export declare class UserEntity {
     signupVerifyToken: string;
     avatarImageUrl: string;
     registrationDate: Date;
+    isVerified: boolean;
     wonGames: GameSessionEntity[];
     friendships: FriendShipEntity[];
     friendOf: FriendShipEntity[];

@@ -22,7 +22,7 @@ AuthModule = __decorate([
                 defaultStrategy: 'jwt',
             }),
             jwt_1.JwtModule.register({
-                secret: process.env.JWT_SECRET,
+                secret: 'secret',
                 signOptions: {
                     expiresIn: 60 * 60,
                 },

@@ -25,6 +25,9 @@ export class UserEntity {
   @Column({ name: 'registration_date' })
   registrationDate: Date;
 
+  @Column()
+  isVerified: boolean;
+
   @OneToMany(() => GameSessionEntity, (gameSession) => gameSession.winner)
   wonGames: GameSessionEntity[];
 

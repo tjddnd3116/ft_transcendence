@@ -44,6 +44,10 @@ __decorate([
     __metadata("design:type", Date)
 ], UserEntity.prototype, "registrationDate", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Boolean)
+], UserEntity.prototype, "isVerified", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => game_session_entity_1.GameSessionEntity, (gameSession) => gameSession.winner),
     __metadata("design:type", Array)
 ], UserEntity.prototype, "wonGames", void 0);

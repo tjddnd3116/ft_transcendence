@@ -24,16 +24,16 @@ let UsersService = class UsersService {
         this.userRepository = userRepository;
     }
     async createUser(createUserDto) {
-        await this.checkUserExists(createUserDto.email);
+        const { email, name, password } = createUserDto;
+        await this.checkUserExists(email);
         const signupVerifyToken = uuid.v1();
-        createUserDto.signupVerifyToken = signupVerifyToken;
-        await this.userRepository.saveUser(createUserDto);
-        await this.sendMemberJoinEmail(createUserDto.email, signupVerifyToken);
+        await this.userRepository.saveUser(email, name, password, signupVerifyToken);
+        await this.sendMemberJoinEmail(email, signupVerifyToken);
     }
     async checkUserExists(emailAddress) {
         const user = await this.userRepository.findUserByEmail(emailAddress);
-        if (!user)
-            throw new rxjs_1.NotFoundError('유저가 존재하지 않습니다.');
+        if (user)
+            throw new Error('이미 같은 이메일을 사용중입니다.');
     }
     async sendMemberJoinEmail(email, signupVerifyToken) {
         await this.emailService.sendMemberJoinVerification(email, signupVerifyToken);
@@ -42,6 +42,7 @@ let UsersService = class UsersService {
         const user = await this.userRepository.findUserByToken(signupVerifyToken);
         if (!user)
             throw new rxjs_1.NotFoundError('유저가 존재하지 않습니다.');
+        user.isVerified = true;
         return this.authService.login({
             id: user.id,
             name: user.name,
@@ -50,7 +51,13 @@ let UsersService = class UsersService {
     }
     async login(email, password) {
         const user = await this.userRepository.findUserByEmail(email);
-        if (user && (await bcrypt.compare(password, user.password))) {
+        if (!user) {
+            throw new common_1.NotFoundException('유저가 존재하지 않습니다.');
+        }
+        if (user.isVerified === false) {
+            throw new common_1.UnauthorizedException('email 인증이 필요합니다.');
+        }
+        if (await bcrypt.compare(password, user.password)) {
             return this.authService.login({
                 id: user.id,
                 name: user.name,
@@ -58,7 +65,7 @@ let UsersService = class UsersService {
             });
         }
         else {
-            throw new rxjs_1.NotFoundError('유저가 존재하지 않습니다.');
+            throw new common_1.UnauthorizedException('비밀번호가 틀렸습니다.');
         }
     }
     async getUserInfo(userId) {
@@ -74,9 +81,7 @@ let UsersService = class UsersService {
     }
     async updateUserInfo(userId, updateUserDto) {
         const { password, avatarImageUrl } = updateUserDto;
-        const user = await this.userRepository.findOne({
-            where: { id: userId },
-        });
+        const user = await this.userRepository.findUserById(userId);
         if (!user) {
             throw new rxjs_1.NotFoundError('유저가 존재하지 않습니다.');
         }

@@ -29,16 +29,11 @@ export class UsersController {
   @ApiBody({
     type: CreateUserDto,
   })
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   async createUser(@Body() createUserDto: CreateUserDto): Promise<void> {
     return this.usersService.createUser(createUserDto);
   }
 
-  @UseGuards(AuthGuard())
-  @ApiOperation({
-    summary: '채팅방 생성 API',
-    description: '채팅방을 생성한다.',
-  })
   @Post('/email-verify')
   @ApiOperation({
     summary: '유저 email 인증 API',

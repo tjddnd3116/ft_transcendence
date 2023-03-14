@@ -11,15 +11,6 @@ export class UserRepository extends Repository<UserEntity> {
     super(UserEntity, dataSource.createEntityManager());
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<void> {
-    const { email, name, password } = createUserDto;
-
-    const salt = await bcrypt.genSalt();
-    const hasedPassword = await bcrypt.hash(password, salt);
-    const user = this.create({ email, name, password: hasedPassword });
-
-    await this.save(user);
-  }
   async findUserByEmail(emailAddress: string): Promise<UserEntity> {
     return await this.findOne({
       where: { email: emailAddress },
@@ -38,18 +29,25 @@ export class UserRepository extends Repository<UserEntity> {
     });
   }
 
-  async saveUser(createUserDto: CreateUserDto): Promise<void> {
+  async saveUser(
+    email: string,
+    name: string,
+    password: string,
+    signupVerifyToken: string,
+  ): Promise<void> {
     const user = new UserEntity();
 
     const salt = await bcrypt.genSalt(1);
-    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     user.id = ulid.ulid();
-    user.name = createUserDto.name;
-    user.email = createUserDto.email;
+    user.name = name;
+    user.email = email;
     user.password = hashedPassword;
     user.avatarImageUrl = 'default.img';
     user.registrationDate = new Date();
+    user.signupVerifyToken = signupVerifyToken;
+    user.isVerified = false;
     await this.save(user);
     return;
   }
