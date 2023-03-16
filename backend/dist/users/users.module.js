@@ -14,13 +14,14 @@ const email_module_1 = require("../email/email.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./entities/user.entity");
 const auth_module_1 = require("../auth/auth.module");
+const jwt_1 = require("@nestjs/jwt");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
     (0, common_1.Module)({
         imports: [email_module_1.EmailModule, typeorm_1.TypeOrmModule.forFeature([user_entity_1.UserEntity]), auth_module_1.AuthModule],
         controllers: [users_controller_1.UsersController],
-        providers: [users_service_1.UsersService],
+        providers: [users_service_1.UsersService, jwt_1.JwtModule],
     })
 ], UsersModule);
 exports.UsersModule = UsersModule;

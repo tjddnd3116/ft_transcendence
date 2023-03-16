@@ -21,6 +21,8 @@ const user_login_dto_1 = require("./dto/user-login.dto");
 const passport_1 = require("@nestjs/passport");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const swagger_1 = require("@nestjs/swagger");
+const get_user_decorator_1 = require("../auth/get-user.decorator");
+const user_entity_1 = require("./entities/user.entity");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -39,8 +41,8 @@ let UsersController = class UsersController {
     async getUserInfo(userId) {
         return this.usersService.getUserInfo(userId);
     }
-    async updateUserInfo(userId, updateUserDto) {
-        return this.usersService.updateUserInfo(userId, updateUserDto);
+    async updateUserInfo(userId, updateUserDto, userInfo) {
+        return this.usersService.updateUserInfo(userId, updateUserDto, userInfo);
     }
 };
 __decorate([
@@ -49,6 +51,7 @@ __decorate([
     (0, swagger_1.ApiBody)({
         type: create_user_dto_1.CreateUserDto,
     }),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
@@ -95,12 +98,14 @@ __decorate([
     (0, common_1.Patch)(':id/status'),
     (0, swagger_1.ApiOperation)({
         summary: '유저 정보 업데이트 API',
-        description: '유저의 정보(password, img)를 업데이트한다.',
+        description: '유저의 정보(password, img...)를 업데이트한다.',
     }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, get_user_decorator_1.getUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto]),
+    __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto,
+        user_entity_1.UserEntity]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUserInfo", null);
 UsersController = __decorate([

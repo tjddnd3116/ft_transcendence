@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserEntity = void 0;
+const chatRoom_entity_1 = require("../../chat-room/entities/chatRoom.entity");
 const game_session_entity_1 = require("../../game/entities/game-session.entity");
 const typeorm_1 = require("typeorm");
 const friendship_entity_1 = require("./friendship.entity");
@@ -59,6 +60,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => friendship_entity_1.FriendShipEntity, (friendship) => friendship.friend),
     __metadata("design:type", Array)
 ], UserEntity.prototype, "friendOf", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => chatRoom_entity_1.ChatRoomEntity, (chatRoom) => chatRoom.owner),
+    __metadata("design:type", Array)
+], UserEntity.prototype, "chatRooms", void 0);
 UserEntity = __decorate([
     (0, typeorm_1.Entity)('User')
 ], UserEntity);

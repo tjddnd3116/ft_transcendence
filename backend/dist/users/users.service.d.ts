@@ -4,6 +4,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserEntity } from './entities/user.entity';
 export declare class UsersService {
     private emailService;
     private authService;
@@ -15,5 +16,5 @@ export declare class UsersService {
     verifyEmail(signupVerifyToken: string): Promise<string>;
     login(email: string, password: string): Promise<string>;
     getUserInfo(userId: string): Promise<UserInfo>;
-    updateUserInfo(userId: string, updateUserDto: UpdateUserDto): Promise<UserInfo>;
+    updateUserInfo(userId: string, updateUserDto: UpdateUserDto, userInfo: UserEntity): Promise<UserInfo>;
 }

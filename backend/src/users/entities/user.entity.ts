@@ -1,3 +1,4 @@
+import { ChatRoomEntity } from 'src/chat-room/entities/chatRoom.entity';
 import { GameSessionEntity } from 'src/game/entities/game-session.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { FriendShipEntity } from './friendship.entity';
@@ -36,4 +37,7 @@ export class UserEntity {
 
   @OneToMany(() => FriendShipEntity, (friendship) => friendship.friend)
   friendOf: FriendShipEntity[];
+
+  @OneToMany(() => ChatRoomEntity, (chatRoom) => chatRoom.owner)
+  chatRooms: ChatRoomEntity[];
 }

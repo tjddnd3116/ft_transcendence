@@ -12,6 +12,7 @@ import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -101,7 +102,9 @@ export class UsersService {
   async updateUserInfo(
     userId: string,
     updateUserDto: UpdateUserDto,
+    userInfo: UserEntity,
   ): Promise<UserInfo> {
+    if (userId !== userInfo.id) throw new UnauthorizedException('권한 없음');
     const { password, avatarImageUrl } = updateUserDto;
     const user = await this.userRepository.findUserById(userId);
     if (!user) {

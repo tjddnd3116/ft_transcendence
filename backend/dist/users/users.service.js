@@ -80,7 +80,9 @@ let UsersService = class UsersService {
             email: user.email,
         };
     }
-    async updateUserInfo(userId, updateUserDto) {
+    async updateUserInfo(userId, updateUserDto, userInfo) {
+        if (userId !== userInfo.id)
+            throw new common_1.UnauthorizedException('권한 없음');
         const { password, avatarImageUrl } = updateUserDto;
         const user = await this.userRepository.findUserById(userId);
         if (!user) {

@@ -4,4 +4,6 @@ export class CreateChatRoomDto {
   description: string;
 
   isPrivate: boolean;
+
+  password: string;
 }

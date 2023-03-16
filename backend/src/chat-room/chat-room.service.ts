@@ -1,41 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { ChatRoomInfo } from './chat-room-info';
+import { ChatRoomRepository } from './chat-room.repository';
+import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import { ChatRoomEntity } from './entities/chatRoom.entity';
 
 @Injectable()
 export class ChatRoomService {
-  constructor(
-    @InjectRepository(ChatRoomEntity)
-    private chatRoomRepository: Repository<ChatRoomEntity>,
-  ) {}
+  constructor(private chatRoomRepository: ChatRoomRepository) {}
 
   async createChatRoom(
-    name: string,
-    description: string,
-    isPrivate: boolean,
-  ): Promise<ChatRoomEntity> {
-    const chatRoom = await this.createNewChat(name, description, isPrivate);
-
-    return chatRoom;
+    createChatRoomDto: CreateChatRoomDto,
+    user: UserEntity,
+  ): Promise<void> {
+    await this.chatRoomRepository.createNewChatRoom(createChatRoomDto, user);
   }
 
-  async createNewChat(
-    name: string,
-    description: string,
-    isPrivate: boolean,
-  ): Promise<ChatRoomEntity> {
-    const newChatRoom = new ChatRoomEntity();
-
-    newChatRoom.name = name;
-    newChatRoom.description = description;
-    newChatRoom.isPrivate = isPrivate;
-    await this.chatRoomRepository.save(newChatRoom);
-    return newChatRoom;
+  async getAllChatRooms(): Promise<ChatRoomInfo[]> {
+    const found = await this.chatRoomRepository.getAllChatRooms();
+    const chatRoomArr: ChatRoomInfo[] = new Array<ChatRoomInfo>();
+    found.forEach((value) => {
+      chatRoomArr.push({
+        name: value.name,
+        owner: value.owner.name,
+        isPrivate: value.isPrivate,
+      });
+    });
+    return chatRoomArr;
   }
 
-  async getAllChatRoom(): Promise<ChatRoomEntity[]> {
-    const found = await this.chatRoomRepository.find();
-    return found;
+  async getChatRoom(chatRoomId: number): Promise<ChatRoomEntity> {
+    return await this.chatRoomRepository.getChatRoom(chatRoomId);
   }
 }

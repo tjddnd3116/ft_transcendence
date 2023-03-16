@@ -18,6 +18,8 @@ import { UserInfo } from './UserInfo';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { getUser } from 'src/auth/get-user.decorator';
+import { UserEntity } from './entities/user.entity';
 
 @Controller('users')
 @ApiTags('User API')
@@ -29,7 +31,7 @@ export class UsersController {
   @ApiBody({
     type: CreateUserDto,
   })
-  // @UsePipes(ValidationPipe)
+  @UsePipes(ValidationPipe)
   async createUser(@Body() createUserDto: CreateUserDto): Promise<void> {
     return this.usersService.createUser(createUserDto);
   }
@@ -72,12 +74,13 @@ export class UsersController {
   @Patch(':id/status')
   @ApiOperation({
     summary: '유저 정보 업데이트 API',
-    description: '유저의 정보(password, img)를 업데이트한다.',
+    description: '유저의 정보(password, img...)를 업데이트한다.',
   })
   async updateUserInfo(
     @Param('id') userId: string,
     @Body() updateUserDto: UpdateUserDto,
+    @getUser() userInfo: UserEntity,
   ): Promise<UserInfo> {
-    return this.usersService.updateUserInfo(userId, updateUserDto);
+    return this.usersService.updateUserInfo(userId, updateUserDto, userInfo);
   }
 }
