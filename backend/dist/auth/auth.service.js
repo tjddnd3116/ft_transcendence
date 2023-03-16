@@ -25,6 +25,17 @@ let AuthService = class AuthService {
         const payload = Object.assign({}, user);
         return this.jwtService.sign(payload);
     }
+    isVerifiedToken(socket) {
+        const auth = socket.handshake.headers.authorization;
+        const token = auth.split(' ')[1];
+        console.log(token);
+        const payload = this.jwtService.verify(token);
+        console.log(payload);
+        if (!payload) {
+            return false;
+        }
+        return true;
+    }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
