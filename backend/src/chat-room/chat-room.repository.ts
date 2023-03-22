@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
-import { ChatRoomInfo } from './chat-room-info';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import { ChatRoomEntity } from './entities/chatRoom.entity';
 
@@ -31,5 +30,9 @@ export class ChatRoomRepository extends Repository<ChatRoomEntity> {
 
   async getChatRoom(chatRoomId: number): Promise<ChatRoomEntity> {
     return await this.findOne({ where: { id: chatRoomId } });
+  }
+
+  async getChatRoomByName(chatRoomName: string): Promise<ChatRoomEntity> {
+    return await this.findOne({ where: { name: chatRoomName } });
   }
 }

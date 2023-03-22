@@ -12,6 +12,6 @@ export declare class AuthService {
     private jwtService;
     constructor(config: ConfigType<typeof authConfig>, jwtService: JwtService);
     login(user: User): string;
-    isVerifiedToken(socket: Socket): boolean;
+    isVerifiedToken(socket: Socket): any;
 }
 export {};

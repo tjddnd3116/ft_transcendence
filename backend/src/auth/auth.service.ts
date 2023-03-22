@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import authConfig from 'src/config/authConfig';
 import { JwtService } from '@nestjs/jwt';
@@ -23,15 +23,11 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  isVerifiedToken(socket: Socket): boolean {
+  isVerifiedToken(socket: Socket) {
     const auth = socket.handshake.headers.authorization;
     const token = auth.split(' ')[1];
-    console.log(token);
     const payload = this.jwtService.verify(token);
     console.log(payload);
-    if (!payload) {
-      return false;
-    }
-    return true;
+    return payload;
   }
 }

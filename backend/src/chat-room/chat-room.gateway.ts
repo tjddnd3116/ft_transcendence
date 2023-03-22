@@ -8,7 +8,8 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { AuthService } from 'src/auth/auth.service';
+import { UsersService } from 'src/users/users.service';
+import { ChatRoomService } from './chat-room.service';
 
 @WebSocketGateway()
 export class ChatRoomGateway
@@ -16,29 +17,39 @@ export class ChatRoomGateway
 {
   @WebSocketServer() server: Server;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private chatRoomService: ChatRoomService,
+    private usersService: UsersService,
+  ) {}
 
   @SubscribeMessage('message')
-  handleMessage(
+  async handleMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: string,
-  ): string {
+  ): Promise<string> {
+    await this.chatRoomService.saveMessage(
+      client.data.user,
+      client.data.chatRoom,
+      payload,
+    );
     client.to(client.rooms[1]).emit('message', payload);
     return payload;
   }
 
   @SubscribeMessage('enterChatRoom')
-  enterChatRoom(
+  async enterChatRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() roomName: string,
+    @MessageBody('roomName') roomName: string,
   ) {
+    const chatRoom = await this.chatRoomService.getChatRoomByName(roomName);
+
+    client.data.chatRoom = chatRoom;
     client.join(roomName);
   }
 
   async handleConnection(socket: Socket): Promise<void> {
-    const bool = this.authService.isVerifiedToken(socket);
-    console.log(bool);
-    console.log('connected', socket.id);
+    const user = await this.usersService.getUserBySocket(socket);
+    socket.data.user = user;
   }
 
   async handleDisconnect(client: Socket) {

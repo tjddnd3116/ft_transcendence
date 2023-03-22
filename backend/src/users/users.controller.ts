@@ -9,6 +9,7 @@ import {
   ValidationPipe,
   UseGuards,
   Patch,
+  Header,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,6 +29,7 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: '유저 생성 API', description: '유저를 생성한다.' })
+  @Header('Access-Control-Allow-Origin', '*')
   @ApiBody({
     type: CreateUserDto,
   })
@@ -53,7 +55,7 @@ export class UsersController {
     summary: '유저 로그인 API',
     description: '유저 email, password로 로그인한다.',
   })
-  async login(@Body() dto: UserLoginDto): Promise<string> {
+  async login(@Body() dto: UserLoginDto): Promise<object> {
     const { email, password } = dto;
 
     return await this.usersService.login(email, password);

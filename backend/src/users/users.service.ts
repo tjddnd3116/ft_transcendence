@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class UsersService {
@@ -64,7 +65,7 @@ export class UsersService {
     });
   }
 
-  async login(email: string, password: string): Promise<string> {
+  async login(email: string, password: string): Promise<object> {
     const user = await this.userRepository.findUserByEmail(email);
 
     if (!user) {
@@ -76,14 +77,28 @@ export class UsersService {
     }
 
     if (await bcrypt.compare(password, user.password)) {
-      return this.authService.login({
+      const jwt = this.authService.login({
         id: user.id,
         name: user.name,
         email: user.email,
       });
+      return { id: user.id, name: user.name, email: user.email, jwt: jwt };
     } else {
       throw new UnauthorizedException('비밀번호가 틀렸습니다.');
     }
+  }
+
+  async getUserBySocket(socket: Socket): Promise<UserEntity> {
+    const payload = this.authService.isVerifiedToken(socket);
+    if (!payload) {
+      throw new UnauthorizedException('jwt error');
+    }
+
+    const user = this.userRepository.findUserById(payload.id);
+    if (!user) {
+      throw new NotFoundException('유저를 찾을 수 없습니다.');
+    }
+    return user;
   }
 
   async getUserInfo(userId: string): Promise<UserInfo> {

@@ -48,6 +48,7 @@ let UsersController = class UsersController {
 __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: '유저 생성 API', description: '유저를 생성한다.' }),
+    (0, common_1.Header)('Access-Control-Allow-Origin', '*'),
     (0, swagger_1.ApiBody)({
         type: create_user_dto_1.CreateUserDto,
     }),

@@ -28,6 +28,8 @@ export class ChatRoomEntity {
   @ManyToOne(() => UserEntity, (user) => user.chatRooms, { eager: true })
   owner: UserEntity;
 
-  @OneToMany(() => MessageEntity, (message) => message.chatRoom)
+  @OneToMany(() => MessageEntity, (message) => message.chatRoom, {
+    eager: true,
+  })
   messages: MessageEntity[];
 }

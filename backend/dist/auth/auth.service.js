@@ -28,13 +28,9 @@ let AuthService = class AuthService {
     isVerifiedToken(socket) {
         const auth = socket.handshake.headers.authorization;
         const token = auth.split(' ')[1];
-        console.log(token);
         const payload = this.jwtService.verify(token);
         console.log(payload);
-        if (!payload) {
-            return false;
-        }
-        return true;
+        return payload;
     }
 };
 AuthService = __decorate([

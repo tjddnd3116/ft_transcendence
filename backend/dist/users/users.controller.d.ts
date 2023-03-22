@@ -10,7 +10,7 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     createUser(createUserDto: CreateUserDto): Promise<void>;
     verifyEmail(dto: VerifyEmailDto): Promise<string>;
-    login(dto: UserLoginDto): Promise<string>;
+    login(dto: UserLoginDto): Promise<object>;
     getUserInfo(userId: string): Promise<UserInfo>;
     updateUserInfo(userId: string, updateUserDto: UpdateUserDto, userInfo: UserEntity): Promise<UserInfo>;
 }

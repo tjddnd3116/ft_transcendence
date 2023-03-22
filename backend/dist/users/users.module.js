@@ -22,6 +22,7 @@ UsersModule = __decorate([
         imports: [email_module_1.EmailModule, typeorm_1.TypeOrmModule.forFeature([user_entity_1.UserEntity]), auth_module_1.AuthModule],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService, jwt_1.JwtModule],
+        exports: [users_service_1.UsersService],
     })
 ], UsersModule);
 exports.UsersModule = UsersModule;

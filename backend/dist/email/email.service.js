@@ -28,8 +28,7 @@ let EmailService = class EmailService {
         });
     }
     async sendMemberJoinVerification(emailAddress, signupVerifyToken) {
-        const baseUrl = this.config.baseUrl;
-        const url = `${baseUrl}/users/email-verify?signupVerifyToken=${signupVerifyToken}`;
+        const url = `http://10.18.249.194:3000/users/email-verify?signupVerifyToken=${signupVerifyToken}`;
         const mailOptions = {
             to: emailAddress,
             subject: '가입 인증 메일',
