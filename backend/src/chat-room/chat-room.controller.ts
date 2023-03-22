@@ -3,9 +3,11 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -34,7 +36,7 @@ export class ChatRoomController {
 
   @Post(':id')
   async enterChatRoom(@Body() enterChatRoomDto: EnterChatRoomDto) {
-    const chatRoom = await this.chatRoomService.getChatRoom(
+    const chatRoom = await this.chatRoomService.getChatRoomById(
       enterChatRoomDto.id,
     );
 
@@ -54,14 +56,22 @@ export class ChatRoomController {
 
   @Get(':id')
   async getChatRoom(@Param('id') chatRoomId: number): Promise<ChatRoomEntity> {
-    return await this.chatRoomService.getChatRoom(chatRoomId);
+    return await this.chatRoomService.getChatRoomById(chatRoomId);
   }
 
-  // @Patch(':id')
-  // async updateChatRoom(
-  //   @Param('id') roomId: number,
-  //   @Body() updateChatRoomDto: UpdateChatRoomDto,
-  //   @getUser() userInfo: UserEntity,) {
-  // ) {
-  // }
+  @Patch(':id')
+  async updateChatRoom(
+    @Param('id') roomId: number,
+    @Body(ChatRoomValidationPipe) updateChatRoomDto: UpdateChatRoomDto,
+    @getUser() user: UserEntity,
+  ) {
+    const chatRoom = await this.chatRoomService.getChatRoomById(roomId);
+    if (!chatRoom) {
+      throw new NotFoundException('해당 id의 room을 찾을 수 없습니다.');
+    }
+    if (chatRoom.owner.id !== user.id) {
+      throw new UnauthorizedException('권한이 없습니다.');
+    }
+    await this.chatRoomService.updateChatRoom(chatRoom, updateChatRoomDto);
+  }
 }

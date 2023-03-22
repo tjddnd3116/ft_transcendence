@@ -9,6 +9,9 @@ export class ChatRoomValidationPipe implements PipeTransform {
     if (value.isPrivate === true && value.password === undefined) {
       throw new BadRequestException('private room needs password');
     }
+    if (value.isPrivate === false) {
+      value.password = null;
+    }
     return value;
   }
 }

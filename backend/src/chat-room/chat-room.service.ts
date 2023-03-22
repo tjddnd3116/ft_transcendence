@@ -3,6 +3,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { ChatRoomInfo } from './chat-room-info';
 import { ChatRoomRepository } from './chat-room.repository';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
+import { UpdateChatRoomDto } from './dto/update-chat-room.dto';
 import { ChatRoomEntity } from './entities/chatRoom.entity';
 import { MessageEntity } from './entities/message.entity';
 import { MessageRepository } from './message.repository';
@@ -34,7 +35,7 @@ export class ChatRoomService {
     return chatRoomArr;
   }
 
-  async getChatRoom(chatRoomId: number): Promise<ChatRoomEntity> {
+  async getChatRoomById(chatRoomId: number): Promise<ChatRoomEntity> {
     return await this.chatRoomRepository.getChatRoom(chatRoomId);
   }
 
@@ -55,5 +56,17 @@ export class ChatRoomService {
     message.chatRoom = chatRoom;
 
     await this.messageRepository.saveMessage(message);
+  }
+
+  async updateChatRoom(
+    chatRoom: ChatRoomEntity,
+    updateChatRoomDto: UpdateChatRoomDto,
+  ) {
+    chatRoom.name = updateChatRoomDto.name;
+    chatRoom.description = updateChatRoomDto.description;
+    chatRoom.isPrivate = updateChatRoomDto.isPrivate;
+    chatRoom.password = updateChatRoomDto.password;
+
+    await this.chatRoomRepository.save(chatRoom);
   }
 }
