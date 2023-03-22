@@ -17,11 +17,13 @@ const typeorm_config_1 = require("./config/typeorm.config");
 const game_module_1 = require("./game/game.module");
 const chat_room_module_1 = require("./chat-room/chat-room.module");
 const authConfig_1 = require("./config/authConfig");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            auth_module_1.AuthModule,
             users_module_1.UsersModule,
             config_1.ConfigModule.forRoot({
                 envFilePath: [`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],

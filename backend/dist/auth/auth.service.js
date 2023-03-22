@@ -16,27 +16,45 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const authConfig_1 = require("../config/authConfig");
 const jwt_1 = require("@nestjs/jwt");
+const users_service_1 = require("../users/users.service");
+const bcrypt = require("bcryptjs");
 let AuthService = class AuthService {
-    constructor(config, jwtService) {
+    constructor(config, jwtService, usersService) {
         this.config = config;
         this.jwtService = jwtService;
+        this.usersService = usersService;
     }
-    login(user) {
+    createJwt(user) {
         const payload = Object.assign({}, user);
         return this.jwtService.sign(payload);
+    }
+    async login(email, password) {
+        const user = await this.usersService.getUserByEmail(email);
+        if (!user) {
+            throw new common_1.NotFoundException('유저가 존재하지 않습니다.');
+        }
+        if (await bcrypt.compare(password, user.password)) {
+            return this.createJwt({
+                name: user.name,
+                email: user.email,
+            });
+        }
+        else {
+            throw new common_1.UnauthorizedException('비밀번호가 올바르지 않습니다.');
+        }
     }
     isVerifiedToken(socket) {
         const auth = socket.handshake.headers.authorization;
         const token = auth.split(' ')[1];
         const payload = this.jwtService.verify(token);
-        console.log(payload);
         return payload;
     }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(authConfig_1.default.KEY)),
-    __metadata("design:paramtypes", [void 0, jwt_1.JwtService])
+    __metadata("design:paramtypes", [void 0, jwt_1.JwtService,
+        users_service_1.UsersService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map

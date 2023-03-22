@@ -48,8 +48,8 @@ export class ChatRoomGateway
   }
 
   async handleConnection(socket: Socket): Promise<void> {
-    const user = await this.usersService.getUserBySocket(socket);
-    socket.data.user = user;
+    // const user = await this.usersService.getUserBySocket(socket);
+    // socket.data.user = user;
   }
 
   async handleDisconnect(client: Socket) {

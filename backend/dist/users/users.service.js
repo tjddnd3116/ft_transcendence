@@ -12,15 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const uuid = require("uuid");
-const email_service_1 = require("../email/email.service");
 const rxjs_1 = require("rxjs");
-const auth_service_1 = require("../auth/auth.service");
 const bcrypt = require("bcryptjs");
 const user_repository_1 = require("./user.repository");
 let UsersService = class UsersService {
-    constructor(emailService, authService, userRepository) {
-        this.emailService = emailService;
-        this.authService = authService;
+    constructor(userRepository) {
         this.userRepository = userRepository;
     }
     async createUser(createUserDto) {
@@ -28,58 +24,14 @@ let UsersService = class UsersService {
         await this.checkUserExists(email);
         const signupVerifyToken = uuid.v1();
         await this.userRepository.saveUser(email, name, password, signupVerifyToken);
-        await this.sendMemberJoinEmail(email, signupVerifyToken);
     }
     async checkUserExists(emailAddress) {
         const user = await this.userRepository.findUserByEmail(emailAddress);
         if (user)
             throw new Error('이미 같은 이메일을 사용중입니다.');
     }
-    async sendMemberJoinEmail(email, signupVerifyToken) {
-        await this.emailService.sendMemberJoinVerification(email, signupVerifyToken);
-    }
-    async verifyEmail(signupVerifyToken) {
-        const user = await this.userRepository.findUserByToken(signupVerifyToken);
-        if (!user)
-            throw new rxjs_1.NotFoundError('유저가 존재하지 않습니다.');
-        user.isVerified = true;
-        this.userRepository.save(user);
-        return this.authService.login({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-        });
-    }
-    async login(email, password) {
-        const user = await this.userRepository.findUserByEmail(email);
-        if (!user) {
-            throw new common_1.NotFoundException('유저가 존재하지 않습니다.');
-        }
-        if (user.isVerified === false) {
-            throw new common_1.UnauthorizedException('email 인증이 필요합니다.');
-        }
-        if (await bcrypt.compare(password, user.password)) {
-            const jwt = this.authService.login({
-                id: user.id,
-                name: user.name,
-                email: user.email,
-            });
-            return { id: user.id, name: user.name, email: user.email, jwt: jwt };
-        }
-        else {
-            throw new common_1.UnauthorizedException('비밀번호가 틀렸습니다.');
-        }
-    }
-    async getUserBySocket(socket) {
-        const payload = this.authService.isVerifiedToken(socket);
-        if (!payload) {
-            throw new common_1.UnauthorizedException('jwt error');
-        }
-        const user = this.userRepository.findUserById(payload.id);
-        if (!user) {
-            throw new common_1.NotFoundException('유저를 찾을 수 없습니다.');
-        }
-        return user;
+    async getUserByEmail(email) {
+        return await this.userRepository.findUserByEmail(email);
     }
     async getUserInfo(userId) {
         const user = await this.userRepository.findUserById(userId);
@@ -110,9 +62,7 @@ let UsersService = class UsersService {
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [email_service_1.EmailService,
-        auth_service_1.AuthService,
-        user_repository_1.UserRepository])
+    __metadata("design:paramtypes", [user_repository_1.UserRepository])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

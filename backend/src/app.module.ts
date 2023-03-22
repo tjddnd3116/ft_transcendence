@@ -8,9 +8,11 @@ import { typeORMConfig } from './config/typeorm.config';
 import { GameModule } from './game/game.module';
 import { ChatRoomModule } from './chat-room/chat-room.module';
 import authConfig from './config/authConfig';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     UsersModule,
     ConfigModule.forRoot({
       envFilePath: [`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],

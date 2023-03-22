@@ -16,8 +16,6 @@ exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
-const verify_email_dto_1 = require("./dto/verify-email.dto");
-const user_login_dto_1 = require("./dto/user-login.dto");
 const passport_1 = require("@nestjs/passport");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const swagger_1 = require("@nestjs/swagger");
@@ -29,14 +27,6 @@ let UsersController = class UsersController {
     }
     async createUser(createUserDto) {
         return this.usersService.createUser(createUserDto);
-    }
-    async verifyEmail(dto) {
-        const { signupVerifyToken } = dto;
-        return await this.usersService.verifyEmail(signupVerifyToken);
-    }
-    async login(dto) {
-        const { email, password } = dto;
-        return await this.usersService.login(email, password);
     }
     async getUserInfo(userId) {
         return this.usersService.getUserInfo(userId);
@@ -58,29 +48,6 @@ __decorate([
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "createUser", null);
-__decorate([
-    (0, common_1.Post)('/email-verify'),
-    (0, swagger_1.ApiOperation)({
-        summary: '유저 email 인증 API',
-        description: '회원가입한 유저의 email 주소로 인증 메일을 발송한다.',
-    }),
-    (0, swagger_1.ApiBody)({ type: verify_email_dto_1.VerifyEmailDto }),
-    __param(0, (0, common_1.Query)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [verify_email_dto_1.VerifyEmailDto]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "verifyEmail", null);
-__decorate([
-    (0, common_1.Post)('/login'),
-    (0, swagger_1.ApiOperation)({
-        summary: '유저 로그인 API',
-        description: '유저 email, password로 로그인한다.',
-    }),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_login_dto_1.UserLoginDto]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "login", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
     (0, common_1.Get)(':id'),
