@@ -49,7 +49,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "createUser", null);
 __decorate([
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({
         summary: '유저 정보 API',
@@ -61,7 +61,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserInfo", null);
 __decorate([
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.UsePipes)(common_1.ValidationPipe),
     (0, common_1.Patch)(':id/status'),
     (0, swagger_1.ApiOperation)({

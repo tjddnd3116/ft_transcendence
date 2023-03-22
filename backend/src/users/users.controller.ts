@@ -9,7 +9,6 @@ import {
   UseGuards,
   Patch,
   Header,
-  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -69,7 +68,7 @@ export class UsersController {
   //   });
   // }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOperation({
     summary: '유저 정보 API',
@@ -79,7 +78,7 @@ export class UsersController {
     return this.usersService.getUserInfo(userId);
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   @Patch(':id/status')
   @ApiOperation({

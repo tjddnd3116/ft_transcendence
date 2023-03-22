@@ -20,10 +20,10 @@ let UsersService = class UsersService {
         this.userRepository = userRepository;
     }
     async createUser(createUserDto) {
-        const { email, name, password } = createUserDto;
+        const { email, name, password, image } = createUserDto;
         await this.checkUserExists(email);
         const signupVerifyToken = uuid.v1();
-        await this.userRepository.saveUser(email, name, password, signupVerifyToken);
+        await this.userRepository.saveUser(email, name, password, signupVerifyToken, image);
     }
     async checkUserExists(emailAddress) {
         const user = await this.userRepository.findUserByEmail(emailAddress);

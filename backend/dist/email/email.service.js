@@ -18,7 +18,6 @@ const emailConfig_1 = require("../config/emailConfig");
 const common_1 = require("@nestjs/common");
 let EmailService = class EmailService {
     constructor(config) {
-        this.config = config;
         this.transporter = nodemailer.createTransport({
             service: config.service,
             auth: {

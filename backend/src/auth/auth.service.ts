@@ -1,11 +1,8 @@
 import {
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import authConfig from 'src/config/authConfig';
 import { JwtService } from '@nestjs/jwt';
 import { Socket } from 'socket.io';
 import { UsersService } from 'src/users/users.service';
@@ -19,16 +16,9 @@ interface User {
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(authConfig.KEY) private config: ConfigType<typeof authConfig>,
     private jwtService: JwtService,
     private usersService: UsersService,
   ) {}
-
-  // login(user: User) {
-  //   const payload = { ...user };
-  //
-  //   return this.jwtService.sign(payload);
-  // }
 
   createJwt(user: User) {
     const payload = { ...user };
@@ -36,7 +26,6 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async login(email: string, password: string): Promise<string> {
     const user = await this.usersService.getUserByEmail(email);
     if (!user) {

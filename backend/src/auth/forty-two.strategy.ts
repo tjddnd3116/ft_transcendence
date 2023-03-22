@@ -29,12 +29,9 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, 'ft') {
     });
     const authUser = new AuthUserDto();
 
-    console.log(req.data);
     authUser.image = req.data.image.link;
     authUser.email = req.data.email;
     authUser.name = req.data.login;
-    authUser.refreshToken = refreshToken;
-
     return authUser;
   }
 }

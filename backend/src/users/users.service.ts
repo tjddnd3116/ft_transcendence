@@ -20,7 +20,7 @@ export class UsersService {
   constructor(private userRepository: UserRepository) {}
 
   async createUser(createUserDto: CreateUserDto) {
-    const { email, name, password } = createUserDto;
+    const { email, name, password, image } = createUserDto;
     await this.checkUserExists(email);
 
     const signupVerifyToken = uuid.v1();
@@ -30,6 +30,7 @@ export class UsersService {
       name,
       password,
       signupVerifyToken,
+      image,
     );
     // await this.sendMemberJoinEmail(email, signupVerifyToken);
   }

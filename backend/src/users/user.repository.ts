@@ -33,6 +33,7 @@ export class UserRepository extends Repository<UserEntity> {
     name: string,
     password: string,
     signupVerifyToken: string,
+    image: string,
   ): Promise<void> {
     const user = new UserEntity();
 
@@ -43,7 +44,7 @@ export class UserRepository extends Repository<UserEntity> {
     user.name = name;
     user.email = email;
     user.password = hashedPassword;
-    user.avatarImageUrl = 'default.img';
+    user.avatarImageUrl = image === undefined ? 'default.img' : image;
     user.registrationDate = new Date();
     user.signupVerifyToken = signupVerifyToken;
     user.isVerified = false;

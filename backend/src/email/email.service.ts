@@ -14,9 +14,7 @@ interface EmailOptions {
 export class EmailService {
   private transporter: Mail;
 
-  constructor(
-    @Inject(emailConfig.KEY) private config: ConfigType<typeof emailConfig>,
-  ) {
+  constructor(@Inject(emailConfig.KEY) config: ConfigType<typeof emailConfig>) {
     this.transporter = nodemailer.createTransport({
       service: config.service,
       auth: {

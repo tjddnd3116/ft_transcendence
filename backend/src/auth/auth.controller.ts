@@ -1,4 +1,12 @@
-import { Body, Controller, Get, NotFoundException, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UserLoginDto } from 'src/users/dto/user-login.dto';
@@ -34,7 +42,7 @@ export class AuthController {
       const createUser = new CreateUserDto();
       createUser.email = authUser.email;
       createUser.name = authUser.name;
-      createUser.password = 'OAuth';
+      createUser.password = '';
       createUser.image = authUser.image;
       await this.usersService.createUser(createUser);
     }
@@ -45,8 +53,9 @@ export class AuthController {
   }
 
   @Post('/login')
-  async login(@Body() userLoginDto: UserLoginDto) {
+  @UsePipes(ValidationPipe)
+  async login(@Body() userLoginDto: UserLoginDto): Promise<string> {
     const { email, password } = userLoginDto;
-    await this.authService.login(email, password);
+    return await this.authService.login(email, password);
   }
 }
